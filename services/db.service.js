@@ -16,7 +16,6 @@ const connection = mysql.createConnection({
 // connect to database
 connection.connect((err) => {
   if (err) throw err;
-  console.log("Connected to database");
 
   // create tables
   createTablesIfNotExist(connection);

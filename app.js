@@ -25,8 +25,4 @@ app.use(express.urlencoded({ extended: false }));
 app.use("/api/auth", authController);
 app.use("/api/products", authMiddleware, productController);
 
-// port
-const PORT = process.env.PORT || 8000;
-
-// listen
-app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
+module.exports = app;
