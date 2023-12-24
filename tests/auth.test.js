@@ -131,7 +131,7 @@ describe("Authentication auth API Tests", () => {
   });
 
   // close server after tests
-  afterAll(() => {
-    server.close();
+  afterAll((done) => {
+    server.close(done);
   });
 });
