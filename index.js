@@ -6,6 +6,9 @@ const express = require("express");
 const authController = require("./controllers/auth.controller");
 const productController = require("./controllers/product.controller");
 
+// middlewares
+const authMiddleware = require("./middlewares/auth.middleware");
+
 // initialize express
 const app = express();
 
@@ -20,7 +23,7 @@ app.use(express.urlencoded({ extended: false }));
 
 // routes
 app.use("/api/auth", authController);
-app.use("/api/products", productController);
+app.use("/api/products", authMiddleware, productController);
 
 // port
 const PORT = process.env.PORT || 8000;
