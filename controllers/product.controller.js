@@ -1,10 +1,8 @@
 const express = require("express");
+const { dbCall } = require("../services/db.service");
 
 // initialize router
 const router = express.Router();
-
-// database
-const db = require("../services/db.service");
 
 // add product
 router.post("/", (req, res) => {
@@ -15,13 +13,16 @@ router.post("/", (req, res) => {
   };
 
   try {
-    // save product to database (calling the procedure)
-    const query = `CALL products.usp_ins_product(?, ?, ?)`;
+    // params
     const values = [data.name, data.description, data.price];
-    db.query(query, values);
 
-    // return response
-    res.status(200).json({ message: "Product added" });
+    // call dbcall
+    dbCall("usp_ins_product", values, (err, result) => {
+      if (err) throw err;
+
+      // return response
+      res.status(200).json({ message: "Product added" });
+    });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
@@ -30,9 +31,8 @@ router.post("/", (req, res) => {
 // get all products
 router.get("/", (req, res) => {
   try {
-    // get all products from database (calling the procedure)
-    const query = `CALL products.usp_list_product()`;
-    db.query(query, (err, result) => {
+    // call dbcall
+    dbCall("usp_list_product", null, (err, result) => {
       if (err) throw err;
 
       // return response
@@ -48,9 +48,8 @@ router.get("/:id", (req, res) => {
   const id = parseInt(req.params.id);
 
   try {
-    // get single product from database (calling the procedure)
-    const query = `CALL products.usp_get_product(?)`;
-    db.query(query, [id], (err, result) => {
+    // call dbcall
+    dbCall("usp_get_product", [id], (err, result) => {
       if (err) throw err;
 
       // return response
@@ -72,13 +71,16 @@ router.put("/:id", (req, res) => {
   };
 
   try {
-    // update product in database (calling the procedure)
-    const query = `CALL products.usp_upd_product(?, ?, ?, ?)`;
+    // params
     const values = [id, data.name, data.description, data.price];
-    db.query(query, values);
 
-    // return response
-    res.status(200).json({ message: "Product updated" });
+    // call dbcall
+    dbCall("usp_upd_product", values, (err, result) => {
+      if (err) throw err;
+
+      // return response
+      res.status(200).json({ message: "Product updated" });
+    });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }
@@ -89,12 +91,13 @@ router.delete("/:id", (req, res) => {
   const id = parseInt(req.params.id);
 
   try {
-    // delete product from database (calling the procedure)
-    const query = `CALL products.usp_del_product(?)`;
-    db.query(query, [id]);
+    // call dbcall
+    dbCall("usp_del_product", [id], (err, result) => {
+      if (err) throw err;
 
-    // return response
-    res.status(200).json({ message: "Product deleted" });
+      // return response
+      res.status(200).json({ message: "Product deleted" });
+    });
   } catch (error) {
     res.status(500).json({ message: "Internal server error" });
   }

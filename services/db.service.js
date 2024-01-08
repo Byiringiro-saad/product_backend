@@ -24,8 +24,18 @@ connection.connect((err) => {
   createProcedures(connection);
 });
 
+// Make db calls
+export const dbCall = (procName, procParams, callback) => {
+  // build query
+  const query = `CALL ${procName}(${procParams.map((_) => "?").join(",")})`;
+  const values = [...procParams];
+
+  // execute query
+  connection.query(query, values, callback);
+};
+
 // create tables
-function createTablesIfNotExist(connection) {
+const createTablesIfNotExist = (connection) => {
   const createTableQueries = [
     // create products table
     `CREATE TABLE IF NOT EXISTS products (
@@ -61,7 +71,7 @@ function createTablesIfNotExist(connection) {
       });
     });
   });
-}
+};
 
 // create procedures
 const createProcedures = (connection) => {
